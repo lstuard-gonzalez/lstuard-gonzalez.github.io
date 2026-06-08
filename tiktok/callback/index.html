@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yt2tok · Código de TikTok</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 24px;
+      font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #0f0f12; color: #f2f2f5;
+    }
+    .card {
+      width: 100%; max-width: 420px; background: #1a1a20; border-radius: 18px;
+      padding: 28px 24px; box-shadow: 0 12px 40px rgba(0,0,0,.5);
+      border: 1px solid #2a2a33; text-align: center;
+    }
+    h1 { font-size: 20px; margin: 0 0 6px; }
+    p { color: #a8a8b3; font-size: 14px; line-height: 1.5; margin: 6px 0 18px; }
+    .code {
+      font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px;
+      word-break: break-all; background: #0f0f12; border: 1px dashed #3a3a45;
+      border-radius: 12px; padding: 16px; margin-bottom: 16px; user-select: all;
+    }
+    button {
+      width: 100%; border: 0; border-radius: 12px; padding: 14px;
+      font-size: 16px; font-weight: 600; cursor: pointer; color: #fff;
+      background: linear-gradient(90deg, #25f4ee, #fe2c55);
+    }
+    button:active { transform: scale(.99); }
+    .ok { color: #25f4ee; font-weight: 600; min-height: 20px; margin-top: 12px; }
+    .err { color: #fe2c55; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Tu código de TikTok</h1>
+    <p>Copia este código, vuelve a la app <b>yt2tok</b> y pégalo en el campo
+       "Pega aquí el código".</p>
+    <div id="code" class="code">…</div>
+    <button id="copy">Copiar código</button>
+    <div id="msg" class="ok"></div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(location.search);
+    var code = params.get("code");
+    var error = params.get("error") || params.get("error_description");
+    var codeEl = document.getElementById("code");
+    var msgEl = document.getElementById("msg");
+
+    if (code) {
+      codeEl.textContent = code;
+    } else if (error) {
+      codeEl.textContent = "(sin código)";
+      msgEl.textContent = "TikTok devolvió un error: " + error;
+      msgEl.className = "ok err";
+    } else {
+      codeEl.textContent = "(esta página espera el regreso del login de TikTok)";
+    }
+
+    document.getElementById("copy").addEventListener("click", function () {
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(function () {
+        msgEl.textContent = "¡Copiado! Pégalo en la app.";
+      }, function () {
+        // Respaldo si el navegador no deja copiar automático
+        var r = document.createRange();
+        r.selectNode(codeEl);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(r);
+        msgEl.textContent = "Selecciónalo y cópialo a mano.";
+      });
+    });
+  </script>
+</body>
+</html>
